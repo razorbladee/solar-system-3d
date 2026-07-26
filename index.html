@@ -585,11 +585,18 @@ const MAPS = {
   })
 };
 
-/* Optional upgrade: real NASA-derived albedo maps.
-   If the CDN is reachable and CORS-clean the procedural map is swapped out. */
-const NASA_MAPS = {
-  earth:   'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/textures/planets/earth_atmos_2048.jpg',
-  moon:    'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/textures/planets/moon_1024.jpg'
+/* Preferred real planetary textures. NASA sources are used where verified;
+   Mercury and Uranus use a public supplemental texture set approved by the user. */
+const REAL_TEXTURE_MAPS = {
+  mercury: 'https://raw.githubusercontent.com/domx4q/astroProject/f7608126e6e5084685082cb0779548c0db6e641c/public/textures/8k_mercury.jpg',
+  venus: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Venus/Venus.jpg',
+  earth: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Earth%20%28A%29/Earth%20%28A%29.jpg',
+  mars: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Mars/Mars.jpg',
+  jupiter: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Jupiter/Jupiter.jpg',
+  saturn: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Saturn/Saturn.jpg',
+  uranus: 'https://raw.githubusercontent.com/domx4q/astroProject/f7608126e6e5084685082cb0779548c0db6e641c/public/textures/2k_uranus.jpg',
+  neptune: 'https://raw.githubusercontent.com/nasa/NASA-3D-Resources/11ebb4ee043715aefbba6aeec8a61746fad67fa7/Images%20and%20Textures/Neptune/Neptune.jpg',
+  moon: 'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/textures/planets/moon_1024.jpg'
 };
 
 /* ════════════════════════════════════════════════════════════
@@ -1463,7 +1470,7 @@ function runJobs() {
     bootText.textContent = 'Готово';
     bootBar.style.width = '100%';
     setTimeout(() => bootEl.classList.add('done'), 260);
-    tryNasaUpgrade();
+    applyRealTextures();
     return;
   }
   const [label, fn] = jobs[jobIndex];
@@ -1474,11 +1481,11 @@ function runJobs() {
   setTimeout(runJobs, 0);
 }
 
-/* if the network is available, swap in real NASA-derived albedo */
-function tryNasaUpgrade() {
+/* If the network is available, replace procedural surfaces with real texture maps. */
+function applyRealTextures() {
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin('anonymous');
-  Object.entries(NASA_MAPS).forEach(([id, url]) => {
+  Object.entries(REAL_TEXTURE_MAPS).forEach(([id, url]) => {
     loader.load(url, tex => {
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = 8;
@@ -1494,7 +1501,7 @@ function tryNasaUpgrade() {
       target.mesh.material.bumpMap = null;
       target.mesh.material.color.set(0xffffff);
       target.mesh.material.needsUpdate = true;
-    }, undefined, () => { /* offline: procedural map stays */ });
+    }, undefined, () => { /* keep procedural fallback if remote texture fails */ });
   });
 }
 
