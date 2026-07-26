@@ -913,7 +913,7 @@ scene.add(prominences);
 
 /* soft outer halo */
 const halo = new THREE.Sprite(new THREE.SpriteMaterial({
-  map: GLOW, color: 0xffb055, transparent: true, opacity: 0.55,
+  map: GLOW, color: 0xffb055, transparent: true, opacity: 0.42,
   blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false
 }));
 halo.scale.setScalar(SUN_R * 5.4);
@@ -1272,7 +1272,7 @@ const comet = buildComet();
    ════════════════════════════════════════════════════════════ */
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.95, 0.62, 0.62);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.75, 0.62, 0.70);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
